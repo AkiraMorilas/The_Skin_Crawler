@@ -12,11 +12,25 @@ def start():
     else:
         print("try again")
 
+def texturedef(keydict):
+    r = "noteskin:setTextures({"
+    for i in keydict:
+        r += "{" + i + " = " + keydict[i] + "}, "
+    r += "})"
+    return r
+
+def imagedef(count):
+    r = "image = {"
+    for i in count:
+        r += '"' + i + '", '
+    r += "}"
+    return r
+
+
 def printer(counts,keydict):
+    print(texturedef(keydict))
     for i in counts:
-        print("")
-        for j in i:
-            print(j + ":" + keydict[j])
+        print(imagedef(i))
 
 
 def kset():
