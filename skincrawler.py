@@ -1,12 +1,12 @@
 
 def start():
-    choice = input("Do you want to set (k)eyboard, (b)eatmania or (e)z2dj keycounts, or (q)uit?")
+    choice = input("Do you want to set (k)eyboard keymodes, (b)eatmania keymodes, or (q)uit?")
     if choice.lower() == "k":
         kset()
     elif choice.lower() == "b":
         bset()
-    elif choice.lower() == "e":
-        eset()
+#    elif choice.lower() == "e":
+#        eset()
     elif choice.lower() == "q":
         exit()
     else:
@@ -73,8 +73,13 @@ def bset():
 
     printer(counts,keydict)
 
+'''
+I quoted out this whole section, because EZ2DJ-like keymode files don't seem to be actually available anywhere despite youtube videos showing them being not that difficult to find.
+inputMode = "5key1pedal1scratch" being in one of the default skins does imply it's supported though so I might reimplement this at some point.
+
 
 def eset():
+    
     keydict = {
     "scratch" : input("input your scratch note: "),
     "white" : input("input your white note: "),
@@ -91,6 +96,8 @@ def eset():
     counts = [e5,e7,e10,e14,e16]
 
     printer(counts,keydict)
+
+'''
 
 while True:
     start()
