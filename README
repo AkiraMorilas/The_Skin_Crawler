@@ -9,5 +9,5 @@ TODO:
 - collumn widths
 - adjustable hit position
 - measure lines
-- actually generate *.skin.lua files
+- actually generate *.skin.lua files instead of just printing to console
 - make a detailed writeup on the wiki about every command

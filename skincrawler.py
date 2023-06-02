@@ -1,26 +1,33 @@
 
 # keycount definitions
-# keyboard keycounts use obvious names("key1", "key2" and so on) so they are not stored
+# stored as ["name", [assignment], [input names]]
 keyboardcounts = [
-["1key", ["thumb"]],
-["2key", ["index","index"]],
-["3key", ["index","thumb","index"]],
-["4key", ["middle","index","index","middle"]],
-["5key", ["middle","index","thumb","index","middle"]],
-["6key", ["ring","middle","index","index","middle","ring"]],
-["7key", ["ring","middle","index","thumb","index","middle","ring"]],
-["8key", ["ring","middle","index","thumb","thumb","index","middle","ring"]],
-["9key", ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"]],
-["10key", ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"]],
-["18key", ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"]]
+["1key", ["thumb"],["key1"]],
+["2key", ["index","index"],["key1","key2"]],
+["3key", ["index","thumb","index"],["key1","key2","key3"]],
+["4key", ["middle","index","index","middle"],["key1","key2","key3","key4"]],
+["5key", ["middle","index","thumb","index","middle"],["key1","key2","key3","key4","key5"]],
+["6key", ["ring","middle","index","index","middle","ring"],["key1","key2","key3","key4","key5","key6"]],
+["7key", ["ring","middle","index","thumb","index","middle","ring"],["key1","key2","key3","key4","key5","key6","key7"]],
+["8key", ["ring","middle","index","thumb","thumb","index","middle","ring"],["key1","key2","key3","key4","key5","key6","key7","key8"]],
+["9key", ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"],["key1","key2","key3","key4","key5","key6","key7","key8","key9"]],
+["10key", ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"],["key1","key2","key3","key4","key5","key6","key7","key8","key9","key10"]],
+["18key", ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"], ["key1","key2","key3","key4","key5","key6","key7","key8","key9","key10","key11","key12","key13","key14","key15","key16","key17","key18"]]
 ]
-# controller keycounts don't which is why they're a list of a "name", [assignment], [key names]
 beatcounts = [
 ["5key1scratch", ["scratch","white","blue","white","blue","white"], ["scratch1", "key1", "key2", "key3", "key4", "key5"]],
 ["7key1scratch", ["scratch","white","blue","white","blue","white", "blue","white"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7"]],
 ["10key2scratch", ["scratch","white","blue","white","blue","white","white","blue","white","blue","white","scratch"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8", "key9", "key10", "scratch2"]],
 ["14key2scratch", ["scratch","white","blue","white","blue","white","blue","white","white","blue","white","blue","white","blue","white","scratch"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8", "key9", "key10","key11", "key12", "key13", "key14","scratch2"]]
 ]
+
+# creates noteskin:setInput()
+def inputdef(inputs):
+    r = "noteskin:setInput({\n"
+    for i in inputs:
+        r += '"' + i + '"' + "\n"
+    r += "})"
+    return r
 
 # creates noteskin:setTextures() code
 def texturedef(keydict):
@@ -71,11 +78,11 @@ def bset():
 in order:
 - the requires
 - noteskin = NoteSkinVsrg:new
-- noteskin:setInput()
++ noteskin:setInput()
 - noteskin:setColumns()
-- noteskin:setTextures()
++ noteskin:setTextures()
 - noteskin:setImagesAuto() <- figure out what's up with that
-- noteskin:setShortNote()
++ noteskin:setShortNote()
 - noteskin:setLongNote()
 - noteskin:setShortNote() <- ???
 - noteskin:addMeasureLine()
@@ -90,14 +97,15 @@ in order:
 - playfield:addDeltaTimeJudgement()
 - return noteskin
 '''
-# the actual thing that writes files(or will in the future
+# the actual thing that writes files(or will in the future)
 def printer(counts,keydict):
     print(texturedef(keydict))
     for i in counts:
         print(i[0])
         print(imagedef(i))
+        print(inputdef(i[2]))
 
-# I'm new to programming, it might be a better idea to call this main?
+# it might be a more common to call this main?
 def start():
     choice = input("Do you want to set (k)eyboard keymodes, (b)ms keymodes, or (q)uit?")
     if choice.lower() == "k":
@@ -113,7 +121,9 @@ while True:
     start()
 
 '''
-here lies some old unused code because EZ2DJ-like keymode files don't seem to be actually available anywhere despite youtube videos with them being not that difficult to find. Also, while "5key1pedal1scratch", and "7key1pedal1scratch" exist in the default skin, none of the EZ doubles modes do.
+here lies some old unused code because EZ2DJ-like keymode files don't seem to be actually available anywhere 
+despite youtube videos with them being not that difficult to find. 
+Also, while "5key1pedal1scratch", and "7key1pedal1scratch" exist in the default skin, none of the EZ doubles modes do.
 
 def eset():
     
