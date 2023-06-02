@@ -2,30 +2,41 @@
 # keycount definitions
 # stored as ["name", [assignment], [input names]]
 keyboardcounts = [
-["1key", ["thumb"],["key1"]],
-["2key", ["index","index"],["key1","key2"]],
-["3key", ["index","thumb","index"],["key1","key2","key3"]],
-["4key", ["middle","index","index","middle"],["key1","key2","key3","key4"]],
-["5key", ["middle","index","thumb","index","middle"],["key1","key2","key3","key4","key5"]],
-["6key", ["ring","middle","index","index","middle","ring"],["key1","key2","key3","key4","key5","key6"]],
-["7key", ["ring","middle","index","thumb","index","middle","ring"],["key1","key2","key3","key4","key5","key6","key7"]],
-["8key", ["ring","middle","index","thumb","thumb","index","middle","ring"],["key1","key2","key3","key4","key5","key6","key7","key8"]],
-["9key", ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"],["key1","key2","key3","key4","key5","key6","key7","key8","key9"]],
-["10key", ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"],["key1","key2","key3","key4","key5","key6","key7","key8","key9","key10"]],
-["18key", ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"], ["key1","key2","key3","key4","key5","key6","key7","key8","key9","key10","key11","key12","key13","key14","key15","key16","key17","key18"]]
+["1key", ["thumb"]],
+["2key", ["index","index"]],
+["3key", ["index","thumb","index"]],
+["4key", ["middle","index","index","middle"]],
+["5key", ["middle","index","thumb","index","middle"]],
+["6key", ["ring","middle","index","index","middle","ring"]],
+["7key", ["ring","middle","index","thumb","index","middle","ring"]],
+["8key", ["ring","middle","index","thumb","thumb","index","middle","ring"]],
+["9key", ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"]],
+["10key", ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"]],
+["18key", ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"]]
 ]
 beatcounts = [
-["5key1scratch", ["scratch","white","blue","white","blue","white"], ["scratch1", "key1", "key2", "key3", "key4", "key5"]],
-["7key1scratch", ["scratch","white","blue","white","blue","white", "blue","white"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7"]],
-["10key2scratch", ["scratch","white","blue","white","blue","white","white","blue","white","blue","white","scratch"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8", "key9", "key10", "scratch2"]],
-["14key2scratch", ["scratch","white","blue","white","blue","white","blue","white","white","blue","white","blue","white","blue","white","scratch"], ["scratch1", "key1", "key2", "key3", "key4", "key5", "key6", "key7", "key8", "key9", "key10","key11", "key12", "key13", "key14","scratch2"]]
+["5key1scratch", ["scratch","white","blue","white","blue","white"]],
+["7key1scratch", ["scratch","white","blue","white","blue","white", "blue","white"]],
+["10key2scratch", ["scratch","white","blue","white","blue","white","white","blue","white","blue","white","scratch"]],
+["14key2scratch", ["scratch","white","blue","white","blue","white","blue","white","white","blue","white","blue","white","blue","white","scratch"]]
 ]
 
-# creates noteskin:setInput()
-def inputdef(inputs):
+# generate input names from keycount name
+def inputdef(count):
+    knum = count.find("k")
+    k = count[:knum]
+    snum = count.find("s")
+    if snum == -1:
+        s = 0
+    else:
+        s = (count[-8])
     r = "noteskin:setInput({\n"
-    for i in inputs:
-        r += '"' + i + '"' + "\n"
+    if int(s) > 0:
+        r += '"scratch1",'+"\n"
+    for i in range(int(k)):
+        r += '"key'+str(i+1)+'",'+"\n"
+    if int(s) > 1:
+        r += '"scratch2"'+"\n"
     r += "})"
     return r
 
@@ -71,7 +82,7 @@ def kset():
 # for bms keycounts
 def bset():
     notes = ["scratch", "white", "blue"]
-    printer(keyboardcounts,notename(notes))
+    printer(beatcounts,notename(notes))
 
 
 '''
@@ -103,7 +114,7 @@ def printer(counts,keydict):
     for i in counts:
         print(i[0])
         print(imagedef(i))
-        print(inputdef(i[2]))
+        print(inputdef(i[0]))
 
 # it might be a more common to call this main?
 def start():
