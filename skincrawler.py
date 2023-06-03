@@ -56,16 +56,18 @@ def imagedef(title,count):
     r = title + " = {\n"
     for i in count:
         r += '"' + i + '", ' + "\n"
-    r += "}"
+    r += "},\n"
     return r
 
 def shortnotedef(count):
-    r = imagedef("image",count)
+    r = "noteskin:setShortNote({\n"
+    r += imagedef("image",count)
     r += "h=48,\n})"
     return r
 
 def longnotedef(count):
-    r = imagedef("head",count)
+    r = "noteskin:setLongNote({\n"
+    r += imagedef("head",count)
     r += imagedef("body",count)
     r += imagedef("tail",count)
     r += "h=48,\n})"
@@ -79,7 +81,7 @@ def sizedef(size,count):
     r += "},\nspace = {"
     for i in count:
         r += "0, "
-    r += "},\n})"
+    r += "0},\n})"
     return r
 
 # assigns filename to finger(or key color in beat skins)
@@ -88,6 +90,16 @@ def notename(notes):
     for i in notes:
         r[i] = str(input("input the filename of your " + i + " note: "))
     return r
+
+def skindata(name,count,hitposition):
+    return "local noteskin = NoteSkinVsrg:new({\npath = ...,\n" + 'name = "' + name + '",' + "\ninputMode = " + '"' + count + '",' + "\nrange = {-1, 1},\nunit = 480,\nhitposition = " + hitposition + ",\n})"
+
+def measuredef(measureline):
+    return "noteskin:addMeasureLine({\nh = " + measureline + ",\ncolor = {1, 1, 1, 0.5},\nimage = " + '"pixel"' + "\n})"
+
+#I'm just copypasting this bit from the default, I'll work out what it actually does later
+def addbga():
+    return "noteskin:addBga({\nx = 0,\ny = 0,\nw = 1,\nh = 1,\ncolor = {0.25, 0.25, 0.25, 1}\n})"
 
 # for keyboard keycounts
 def kset():
@@ -99,10 +111,11 @@ def bset():
     notes = ["scratch", "white", "blue"]
     printer(beatcounts,notename(notes))
 
+    
 '''
 in order:
 + the requires
-- noteskin = NoteSkinVsrg:new
++ noteskin = NoteSkinVsrg:new
 + noteskin:setInput()
 + noteskin:setColumns()
 + noteskin:setTextures()
@@ -110,31 +123,42 @@ in order:
 + noteskin:setShortNote()
 + noteskin:setLongNote()
 - noteskin:setShortNote() <- ???
-- noteskin:addMeasureLine()
-- noteskin:addBga()
-- playfield = BasePlayfield:new
-- playfield:addBga()
-- playfield:enableCamera()
-- playfield:addNotes()
++ noteskin:addMeasureLine()
++ noteskin:addBga()
++ playfield = BasePlayfield:new
++ playfield:addBga()
++ playfield:enableCamera()
++ playfield:addNotes()
 - playfield:addKeyImages()
-- playfield:disableCamera()
-- playfield:addBaseElements()
++ playfield:disableCamera()
++ playfield:addBaseElements()
 - playfield:addDeltaTimeJudgement()
-- return noteskin
++ return noteskin
 '''
 # the actual thing that writes files(or will in the future)
 def printer(counts,keydict):
     size = input("what is your note width? ")
+    name = input("what is the name of the skin? ")
+    hitposition = input("what is your hitposition? ")
+    measureline = input("how thick do you want your measure line(0 for none)? ")
     for key, value in counts.items():
         f = open(key + ".skin.lua","w")
         skin = firstfewlines + "\n\n"
-        skin += texturedef(keydict) + "\n\n"
-        skin += "noteskin:setImagesAuto()\n\n"
-        skin += key + "\n\n"
-        skin += shortnotedef(value) + "\n\n"
-        skin += longnotedef(value) + "\n\n"
+        skin += skindata(name,key,hitposition) + "\n\n"
         skin += inputdef(key) + "\n\n"
         skin += sizedef(size,value) + "\n\n"
+        skin += texturedef(keydict) + "\n\n"
+        skin += "noteskin:setImagesAuto()\n\n"
+        skin += shortnotedef(value) + "\n\n"
+        skin += longnotedef(value) + "\n\n"
+        skin += measuredef(measureline) + "\n\n"
+        skin += addbga() + "\n\n"
+        skin += "local playfield = BasePlayfield:new({\nnoteskin = noteskin\n})"
+        skin += "playfield:enableCamera()" + "\n\n"
+        skin += "playfield:addNotes()" + "\n\n"
+        skin += "playfield:disableCamera()" + "\n\n"
+        skin += "playfield:addBaseElements()" + "\n\n"
+        skin += "return noteskin"
         f.write(skin)
 
 # it might be a more common to call this main?
@@ -175,4 +199,3 @@ def eset():
     e16 = ["scratch","white","blue","white","blue","white","foot","red","red","red","red","foot","white","blue","white","blue","white","scratch"]
     counts = [e5,e7,e10,e14,e16]
 '''
-
