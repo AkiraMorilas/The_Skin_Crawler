@@ -2,12 +2,10 @@
 a script to generate soundsphere(https://github.com/semyon422/soundsphere) skin files
 named by Hugged
 
+It's capable of generating a rough, but working skin.
 TODO:
 - judgements(what you're shown during play is user defined, what you're shown in the result screen is calculated by the game regardless of that)
 - key images
 - lane colours(if possible)
-- collumn widths
-- adjustable hit position
-- measure lines
-- actually generate *.skin.lua files instead of just printing to console
 - make a detailed writeup on the wiki about every command
+- make it more configureable
