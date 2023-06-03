@@ -1,26 +1,28 @@
 
 # keycount definitions
 # stored as ["name", [assignment], [input names]]
-keyboardcounts = [
-["1key", ["thumb"]],
-["2key", ["index","index"]],
-["3key", ["index","thumb","index"]],
-["4key", ["middle","index","index","middle"]],
-["5key", ["middle","index","thumb","index","middle"]],
-["6key", ["ring","middle","index","index","middle","ring"]],
-["7key", ["ring","middle","index","thumb","index","middle","ring"]],
-["8key", ["ring","middle","index","thumb","thumb","index","middle","ring"]],
-["9key", ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"]],
-["10key", ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"]],
-["18key", ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"]]
-]
-beatcounts = [
-["5key1scratch", ["scratch","white","blue","white","blue","white"]],
-["7key1scratch", ["scratch","white","blue","white","blue","white", "blue","white"]],
-["10key2scratch", ["scratch","white","blue","white","blue","white","white","blue","white","blue","white","scratch"]],
-["14key2scratch", ["scratch","white","blue","white","blue","white","blue","white","white","blue","white","blue","white","blue","white","scratch"]]
-]
+keyboardcounts = {
+    "1key" : ["thumb"],
+    "2key" : ["index","index"],
+    "3key" : ["index","thumb","index"],
+    "4key" : ["middle","index","index","middle"],
+    "5key" : ["middle","index","thumb","index","middle"],
+    "6key" : ["ring","middle","index","index","middle","ring"],
+    "7key" : ["ring","middle","index","thumb","index","middle","ring"],
+    "8key" : ["ring","middle","index","thumb","thumb","index","middle","ring"],
+    "9key" : ["pinky","ring","middle","index","thumb","index","middle","ring","pinky"],
+    "10key" : ["pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky"],
+    "18key" : ["pinky","ring","middle","index","pinky","ring","middle","index","thumb","thumb","index","middle","ring","pinky","index","middle","ring","pinky"]
+    }
 
+beatcounts = {
+    "5key1scratch" : ["scratch","white","blue","white","blue","white"],
+    "7key1scratch" : ["scratch","white","blue","white","blue","white", "blue","white"],
+    "10key2scratch" : ["scratch","white","blue","white","blue","white","white","blue","white","blue","white","scratch"],
+    "14key2scratch" : ["scratch","white","blue","white","blue","white","blue","white","white","blue","white","blue","white","blue","white","scratch"]
+    }
+
+firstfewlines = 'local NoteSkinVsrg = require("sphere.models.NoteSkinModel.NoteSkinVsrg")' + "\n" + 'local BasePlayfield = require("sphere.models.NoteSkinModel.BasePlayfield")'
 # generate input names from keycount name
 def inputdef(count):
     knum = count.find("k")
@@ -30,6 +32,7 @@ def inputdef(count):
         s = 0
     else:
         s = (count[-8])
+    
     r = "noteskin:setInput({\n"
     if int(s) > 0:
         r += '"scratch1",'+"\n"
@@ -49,22 +52,34 @@ def texturedef(keydict):
     return r
 
 # creates image lists for noteskin:setShortNote() and noteskin:setLongNote()
-def imagedef(count):
-    r = "image = {\n"
-    for i in count[1]:
+def imagedef(title,count):
+    r = title + " = {\n"
+    for i in count:
         r += '"' + i + '", ' + "\n"
     r += "}"
     return r
 
+def shortnotedef(count):
+    r = imagedef("image",count)
+    r += "h=48,\n})"
+    return r
+
+def longnotedef(count):
+    r = imagedef("head",count)
+    r += imagedef("body",count)
+    r += imagedef("tail",count)
+    r += "h=48,\n})"
+    return r    
+
 # creates noteskin:setColumns()
 def sizedef(size,count):
-    r = "noteskin:setColumns({offset = 0, " + 'align = "center", ' + "width = {"
+    r = "noteskin:setColumns({\noffset = 0,\n" + 'align = "center",' + "\nwidth = {"
     for i in count:
         r += size + ", "
-    r += "}, space = {"
+    r += "},\nspace = {"
     for i in count:
         r += "0, "
-    r += "},})"
+    r += "},\n})"
     return r
 
 # assigns filename to finger(or key color in beat skins)
@@ -84,17 +99,16 @@ def bset():
     notes = ["scratch", "white", "blue"]
     printer(beatcounts,notename(notes))
 
-
 '''
 in order:
-- the requires
++ the requires
 - noteskin = NoteSkinVsrg:new
 + noteskin:setInput()
-- noteskin:setColumns()
++ noteskin:setColumns()
 + noteskin:setTextures()
-- noteskin:setImagesAuto() <- figure out what's up with that
++ noteskin:setImagesAuto()
 + noteskin:setShortNote()
-- noteskin:setLongNote()
++ noteskin:setLongNote()
 - noteskin:setShortNote() <- ???
 - noteskin:addMeasureLine()
 - noteskin:addBga()
@@ -110,11 +124,18 @@ in order:
 '''
 # the actual thing that writes files(or will in the future)
 def printer(counts,keydict):
-    print(texturedef(keydict))
-    for i in counts:
-        print(i[0])
-        print(imagedef(i))
-        print(inputdef(i[0]))
+    size = input("what is your note width? ")
+    for key, value in counts.items():
+        f = open(key + ".skin.lua","w")
+        skin = firstfewlines + "\n\n"
+        skin += texturedef(keydict) + "\n\n"
+        skin += "noteskin:setImagesAuto()\n\n"
+        skin += key + "\n\n"
+        skin += shortnotedef(value) + "\n\n"
+        skin += longnotedef(value) + "\n\n"
+        skin += inputdef(key) + "\n\n"
+        skin += sizedef(size,value) + "\n\n"
+        f.write(skin)
 
 # it might be a more common to call this main?
 def start():
